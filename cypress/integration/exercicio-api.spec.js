@@ -2,10 +2,8 @@
 import contracts from '../contracts/usuarios.contract'
 
 describe('Testes da Funcionalidade Usuários', () => {
-     let token
-    before(() => {
-        cy.token('fulano@qa.com', 'teste').then(tkn => { token = tkn })
-    });
+    
+    
 
     it('Deve validar contrato de usuários', () => {
      cy.request('usuarios').then(response => {
@@ -28,19 +26,13 @@ describe('Testes da Funcionalidade Usuários', () => {
     });
 
     it.only('Deve cadastrar um usuário com sucesso', () => {
-     let usuario = `Debora ${Math.floor(Math.random() * 1000000)}`
-     cy.request({
-          method: 'POST',
-          url: 'usuarios',
-          body: {
-              "nome": "Debora Penimpedo",
-              "email": "deborapenimpedo@hotmail.com",
-              "passaword": "teste123",
-              "administrador": "true"
-          },
-          headers: { authorization: token }
-                   
-      }).then((response) => {
+     let usuario = `Usuario Ebac ${Math.floor(Math.random() * 1000000)}`
+     let email = `testeebac@gmai.com ${Math.floor(Math.random() * 1000000)}`
+     let senha = `teste123 ${Math.floor(Math.random() * 1000000)}`
+     
+     cy.cadastrarUsuario(usuario, email, senha, true)
+          
+         .then((response) => {
           expect(response.status).to.equal(201)
           expect(response.body.message).to.equal('Cadastro realizado com sucesso')
       })
@@ -48,11 +40,27 @@ describe('Testes da Funcionalidade Usuários', () => {
     });
 
     it('Deve validar um usuário com email inválido', () => {
-         //TODO: 
+        let usuario = `Debora ${Math.floor(Math.random() * 1000000)}`
+        cy.request({
+             method: 'POST',
+             url: 'usuarios',
+             body: {
+                 "nome": "Debora Penimpedo",
+                 "email": "deborapenimpedohotmail.com",
+                 "password": "teste123",
+                 "administrador": "true"
+             },
+             failOnStatusCode: false        
+         }).then((response) => {
+             expect(response.status).to.equal(400)
+             expect(response.body.message).to.equal('email deve ser um email válido')
+         })
+            
     });
 
     it('Deve editar um usuário previamente cadastrado', () => {
-         //TODO: 
+        let usuario = `Debora ${Math.floor(Math.random() * 1000000)}`
+        cy.cadastrarUsuario (usuario, email, senha, adm) 
     });
 
     it('Deve deletar um usuário previamente cadastrado', () => {
